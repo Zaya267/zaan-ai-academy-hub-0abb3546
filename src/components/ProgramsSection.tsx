@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { User, Users, GraduationCap, Code, Brain } from 'lucide-react';
+import { User, Users, GraduationCap, Code, Brain, Globe } from 'lucide-react';
 
 const ProgramsSection = () => {
   const programs = [
@@ -13,6 +13,7 @@ const ProgramsSection = () => {
       icon: User,
       audience: "Private Individuals",
       features: ["Personalized learning path", "Flexible scheduling", "Direct feedback", "Real-world projects"],
+      pricing: "R120 per session",
       popular: true
     },
     {
@@ -21,6 +22,7 @@ const ProgramsSection = () => {
       icon: GraduationCap,
       audience: "School Learners",
       features: ["Curriculum-aligned content", "Exam preparation", "Project assistance", "Academic applications"],
+      pricing: "R120 per session",
       popular: false
     },
     {
@@ -29,6 +31,16 @@ const ProgramsSection = () => {
       icon: Users,
       audience: "Educators",
       features: ["Classroom integration", "Assessment strategies", "Student engagement", "Ethical considerations"],
+      pricing: "Private: R170 per educator or R550 for 4+ group\nSchool-Based: R800 per session (min group of 10)",
+      popular: false
+    },
+    {
+      title: "Online AI Training",
+      description: "Learn AI skills from anywhere with our interactive online sessions.",
+      icon: Globe,
+      audience: "Remote Learners",
+      features: ["Live video tutorials", "Interactive exercises", "Digital resources", "Flexible scheduling"],
+      pricing: "R120 per session",
       popular: false
     }
   ];
@@ -43,7 +55,7 @@ const ProgramsSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {programs.map((program, index) => (
             <Card key={index} className={`overflow-hidden transition-all ${program.popular ? 'border-atzaan-purple shadow-lg relative' : 'hover:shadow-md'}`}>
               {program.popular && (
@@ -62,7 +74,7 @@ const ProgramsSection = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 mb-6">{program.description}</p>
-                <div className="space-y-3 mb-8">
+                <div className="space-y-3 mb-4">
                   {program.features.map((feature, i) => (
                     <div key={i} className="flex items-center">
                       <div className="h-5 w-5 rounded-full bg-atzaan-soft-purple flex items-center justify-center mr-3">
@@ -72,6 +84,12 @@ const ProgramsSection = () => {
                     </div>
                   ))}
                 </div>
+                
+                <div className="bg-gray-50 rounded-md p-3 mb-6">
+                  <p className="text-sm font-medium text-atzaan-purple">Pricing</p>
+                  <p className="text-sm text-gray-700 whitespace-pre-line">{program.pricing}</p>
+                </div>
+                
                 <Button asChild className={`w-full ${program.popular ? 'bg-atzaan-purple hover:bg-atzaan-purple/90' : 'bg-gray-100 hover:bg-gray-200 text-gray-900'}`}>
                   <a href="#register">Enroll Now</a>
                 </Button>
@@ -96,6 +114,12 @@ const ProgramsSection = () => {
               </Button>
             </div>
           </div>
+        </div>
+
+        <div className="mt-12 text-center">
+          <Badge className="bg-atzaan-soft-purple text-atzaan-purple mb-3">By Appointment Only</Badge>
+          <p className="text-lg text-gray-700">Venue-based training - we come to you!</p>
+          <p className="text-sm text-gray-500 mt-2">No prior experience needed. We provide step-by-step, easy-to-follow training.</p>
         </div>
       </div>
     </section>

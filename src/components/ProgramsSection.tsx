@@ -31,7 +31,7 @@ const ProgramsSection = () => {
       icon: Users,
       audience: "Educators",
       features: ["Classroom integration", "Assessment strategies", "Student engagement", "Ethical considerations"],
-      pricing: "Private: R170 per educator or R550 for 4+ group\nSchool-Based: R800 per session (min group of 10)",
+      pricing: "Private: R170 per educator OR R550 for groups of 4+\nGroups of 10-29: R1500 per session\nGroups of 30: R4000 per session (maximum capacity)",
       popular: false
     },
     {
@@ -127,3 +127,4 @@ const ProgramsSection = () => {
 };
 
 export default ProgramsSection;
+

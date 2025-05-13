@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { User, Users, GraduationCap, Code, Brain, Globe } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const ProgramsSection = () => {
   const programs = [
@@ -41,7 +42,8 @@ const ProgramsSection = () => {
       audience: "Remote Learners",
       features: ["Live video tutorials", "Interactive exercises", "Digital resources", "Flexible scheduling"],
       pricing: "R120 per session",
-      popular: false
+      popular: false,
+      onlineClass: true
     }
   ];
 
@@ -90,8 +92,15 @@ const ProgramsSection = () => {
                   <p className="text-sm text-gray-700 whitespace-pre-line">{program.pricing}</p>
                 </div>
                 
-                <Button asChild className={`w-full ${program.popular ? 'bg-atzaan-purple hover:bg-atzaan-purple/90' : 'bg-gray-100 hover:bg-gray-200 text-gray-900'}`}>
-                  <a href="#register">Enroll Now</a>
+                <Button 
+                  asChild 
+                  className={`w-full ${program.popular ? 'bg-atzaan-purple hover:bg-atzaan-purple/90' : 'bg-gray-100 hover:bg-gray-200 text-gray-900'}`}
+                >
+                  {program.onlineClass ? (
+                    <Link to="/online-classroom">Enter Online Classroom</Link>
+                  ) : (
+                    <a href="#register">Enroll Now</a>
+                  )}
                 </Button>
               </CardContent>
             </Card>
@@ -127,4 +136,3 @@ const ProgramsSection = () => {
 };
 
 export default ProgramsSection;
-

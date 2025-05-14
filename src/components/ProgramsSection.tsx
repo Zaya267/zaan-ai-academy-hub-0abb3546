@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { User, Users, GraduationCap, Code, Brain, Globe } from 'lucide-react';
+import { User, Users, GraduationCap, Code, Brain, Globe, Calendar, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const ProgramsSection = () => {
@@ -15,7 +15,8 @@ const ProgramsSection = () => {
       audience: "Private Individuals",
       features: ["Personalized learning path", "Flexible scheduling", "Direct feedback", "Real-world projects"],
       pricing: "R120 per session",
-      popular: true
+      popular: true,
+      availability: "Available online and in-person"
     },
     {
       title: "Student AI Foundations",
@@ -24,7 +25,8 @@ const ProgramsSection = () => {
       audience: "School Learners",
       features: ["Curriculum-aligned content", "Exam preparation", "Project assistance", "Academic applications"],
       pricing: "R120 per session",
-      popular: false
+      popular: false,
+      availability: "Available online and in-person"
     },
     {
       title: "Educator AI Integration",
@@ -33,17 +35,19 @@ const ProgramsSection = () => {
       audience: "Educators",
       features: ["Classroom integration", "Assessment strategies", "Student engagement", "Ethical considerations"],
       pricing: "Private: R170 per educator OR R550 for groups of 4+\nGroups of 10-29: R1500 per session\nGroups of 30: R4000 per session (maximum capacity)",
-      popular: false
+      popular: false,
+      availability: "Available online and in-person"
     },
     {
       title: "Online AI Training",
-      description: "Learn AI skills from anywhere with our interactive online sessions.",
+      description: "Learn AI skills from anywhere with our interactive sessions - perfect for remote learning.",
       icon: Globe,
       audience: "Remote Learners",
       features: ["Live video tutorials", "Interactive exercises", "Digital resources", "Flexible scheduling"],
       pricing: "R120 per session",
       popular: false,
-      onlineClass: true
+      onlineClass: true,
+      availability: "Fully online experience"
     }
   ];
 
@@ -86,6 +90,26 @@ const ProgramsSection = () => {
                     </div>
                   ))}
                 </div>
+
+                <div className="mb-6">
+                  <div className="flex items-center mb-2">
+                    <Clock size={16} className="text-atzaan-purple mr-2" />
+                    <span className="text-sm font-medium">Available as:</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    <Badge variant="outline" className="bg-gray-50">Full-time (12 months)</Badge>
+                    <Badge variant="outline" className="bg-gray-50">Part-time sessions</Badge>
+                  </div>
+                  
+                  <div className="flex items-center mb-2">
+                    <Globe size={16} className="text-atzaan-purple mr-2" />
+                    <span className="text-sm font-medium">Format:</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    <Badge variant="outline" className="bg-gray-50">In-person</Badge>
+                    <Badge variant="outline" className="bg-gray-50">Online</Badge>
+                  </div>
+                </div>
                 
                 <div className="bg-gray-50 rounded-md p-3 mb-6">
                   <p className="text-sm font-medium text-atzaan-purple">Pricing</p>
@@ -126,8 +150,13 @@ const ProgramsSection = () => {
         </div>
 
         <div className="mt-12 text-center">
-          <Badge className="bg-atzaan-soft-purple text-atzaan-purple mb-3">By Appointment Only</Badge>
-          <p className="text-lg text-gray-700">Venue-based training - we come to you!</p>
+          <div className="flex justify-center gap-4 flex-wrap mb-3">
+            <Badge className="bg-atzaan-soft-purple text-atzaan-purple">Full-time Students</Badge>
+            <Badge className="bg-atzaan-soft-purple text-atzaan-purple">Part-time Options</Badge>
+            <Badge className="bg-atzaan-soft-purple text-atzaan-purple">In-person Classes</Badge>
+            <Badge className="bg-atzaan-soft-purple text-atzaan-purple">Online Learning</Badge>
+          </div>
+          <p className="text-lg text-gray-700">Flexible learning options to suit your schedule and preferences</p>
           <p className="text-sm text-gray-500 mt-2">No prior experience needed. We provide step-by-step, easy-to-follow training.</p>
         </div>
       </div>

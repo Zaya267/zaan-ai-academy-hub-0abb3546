@@ -45,9 +45,20 @@ const OnlineClassroom = () => {
       <Navbar />
       
       <main className="flex-grow container mx-auto px-4 py-8 mt-16">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-atzaan-purple">Online Classroom</h1>
-          <p className="text-gray-600">Interactive learning environment for AtZaan AI Labs</p>
+        <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-atzaan-purple">AtZaan Classroom</h1>
+            <p className="text-gray-600">Interactive learning environment for all AtZaan AI Labs programs</p>
+          </div>
+          <div className="mt-4 md:mt-0 flex items-center space-x-2">
+            <div className="flex items-center bg-atzaan-soft-purple text-atzaan-purple px-3 py-1 rounded-full text-sm">
+              <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+              Live Session
+            </div>
+            <div className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+              Available for all programs
+            </div>
+          </div>
         </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

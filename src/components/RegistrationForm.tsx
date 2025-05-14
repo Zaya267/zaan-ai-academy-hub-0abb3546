@@ -8,6 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Check } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { CalendarIcon } from "lucide-react";
 
 const RegistrationForm = () => {
   const { toast } = useToast();
@@ -16,18 +22,27 @@ const RegistrationForm = () => {
     email: '',
     phone: '',
     program: '',
+    studentType: 'part-time',
+    classFormat: 'in-person',
+    startDate: undefined as Date | undefined,
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormState(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSelectChange = (value: string) => {
-    setFormState(prev => ({ ...prev, program: value }));
+  const handleSelectChange = (field: string, value: string) => {
+    setFormState(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleDateSelect = (date: Date | undefined) => {
+    setFormState(prev => ({ ...prev, startDate: date }));
+    setShowDatePicker(false);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -106,7 +121,7 @@ const RegistrationForm = () => {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="program">Program Interest</Label>
-                      <Select onValueChange={handleSelectChange} required>
+                      <Select onValueChange={(value) => handleSelectChange('program', value)} required>
                         <SelectTrigger id="program">
                           <SelectValue placeholder="Select a program" />
                         </SelectTrigger>
@@ -114,10 +129,85 @@ const RegistrationForm = () => {
                           <SelectItem value="individual">Individual AI Mastery</SelectItem>
                           <SelectItem value="student">Student AI Foundations</SelectItem>
                           <SelectItem value="educator">Educator AI Integration</SelectItem>
+                          <SelectItem value="online">Online AI Training</SelectItem>
                           <SelectItem value="custom">Custom Group Program</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
+                  </div>
+
+                  <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
+                    <Label>Student Type</Label>
+                    <RadioGroup 
+                      defaultValue="part-time"
+                      className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2"
+                      onValueChange={(value) => handleSelectChange('studentType', value)}
+                    >
+                      <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-gray-50 cursor-pointer">
+                        <RadioGroupItem value="full-time" id="full-time" />
+                        <Label htmlFor="full-time" className="flex flex-col cursor-pointer">
+                          <span className="font-medium">Full-Time Student</span>
+                          <span className="text-sm text-gray-500">12-month program</span>
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-gray-50 cursor-pointer">
+                        <RadioGroupItem value="part-time" id="part-time" />
+                        <Label htmlFor="part-time" className="flex flex-col cursor-pointer">
+                          <span className="font-medium">Part-Time Student</span>
+                          <span className="text-sm text-gray-500">Book available sessions</span>
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                  
+                  <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
+                    <Label>Class Format</Label>
+                    <RadioGroup 
+                      defaultValue="in-person"
+                      className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2"
+                      onValueChange={(value) => handleSelectChange('classFormat', value)}
+                    >
+                      <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-gray-50 cursor-pointer">
+                        <RadioGroupItem value="in-person" id="in-person" />
+                        <Label htmlFor="in-person" className="flex flex-col cursor-pointer">
+                          <span className="font-medium">In-Person</span>
+                          <span className="text-sm text-gray-500">Attend classes at our venues</span>
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-gray-50 cursor-pointer">
+                        <RadioGroupItem value="online" id="online" />
+                        <Label htmlFor="online" className="flex flex-col cursor-pointer">
+                          <span className="font-medium">Online</span>
+                          <span className="text-sm text-gray-500">Join our virtual classroom</span>
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="startDate">Preferred Start Date (Optional)</Label>
+                    <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !formState.startDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {formState.startDate ? format(formState.startDate, "PPP") : "Select date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={formState.startDate}
+                          onSelect={handleDateSelect}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
                   
                   <div className="space-y-2">

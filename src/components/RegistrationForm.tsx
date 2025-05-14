@@ -7,13 +7,12 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Check } from 'lucide-react';
+import { Check, CalendarIcon } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { CalendarIcon } from "lucide-react";
 
 const RegistrationForm = () => {
   const { toast } = useToast();
@@ -29,7 +28,6 @@ const RegistrationForm = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -42,7 +40,6 @@ const RegistrationForm = () => {
 
   const handleDateSelect = (date: Date | undefined) => {
     setFormState(prev => ({ ...prev, startDate: date }));
-    setShowDatePicker(false);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -129,7 +126,6 @@ const RegistrationForm = () => {
                           <SelectItem value="individual">Individual AI Mastery</SelectItem>
                           <SelectItem value="student">Student AI Foundations</SelectItem>
                           <SelectItem value="educator">Educator AI Integration</SelectItem>
-                          <SelectItem value="online">Online AI Training</SelectItem>
                           <SelectItem value="custom">Custom Group Program</SelectItem>
                         </SelectContent>
                       </Select>
@@ -186,9 +182,10 @@ const RegistrationForm = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="startDate">Preferred Start Date (Optional)</Label>
-                    <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
+                    <Popover>
                       <PopoverTrigger asChild>
                         <Button
+                          id="startDate"
                           variant="outline"
                           className={cn(
                             "w-full justify-start text-left font-normal",
@@ -199,7 +196,7 @@ const RegistrationForm = () => {
                           {formState.startDate ? format(formState.startDate, "PPP") : "Select date"}
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
+                      <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
                           selected={formState.startDate}

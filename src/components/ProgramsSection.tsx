@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -37,17 +36,6 @@ const ProgramsSection = () => {
       pricing: "Private: R170 per educator OR R550 for groups of 4+\nGroups of 10-29: R1500 per session\nGroups of 30: R4000 per session (maximum capacity)",
       popular: false,
       availability: "Available online and in-person"
-    },
-    {
-      title: "Online AI Training",
-      description: "Learn AI skills from anywhere with our interactive sessions - perfect for remote learning.",
-      icon: Globe,
-      audience: "Remote Learners",
-      features: ["Live video tutorials", "Interactive exercises", "Digital resources", "Flexible scheduling"],
-      pricing: "R120 per session",
-      popular: false,
-      onlineClass: true,
-      availability: "Fully online experience"
     }
   ];
 
@@ -61,7 +49,7 @@ const ProgramsSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {programs.map((program, index) => (
             <Card key={index} className={`overflow-hidden transition-all ${program.popular ? 'border-atzaan-purple shadow-lg relative' : 'hover:shadow-md'}`}>
               {program.popular && (
@@ -120,11 +108,7 @@ const ProgramsSection = () => {
                   asChild 
                   className={`w-full ${program.popular ? 'bg-atzaan-purple hover:bg-atzaan-purple/90' : 'bg-gray-100 hover:bg-gray-200 text-gray-900'}`}
                 >
-                  {program.onlineClass ? (
-                    <Link to="/online-classroom">Enter Online Classroom</Link>
-                  ) : (
-                    <a href="#register">Enroll Now</a>
-                  )}
+                  <a href="#register">Enroll Now</a>
                 </Button>
               </CardContent>
             </Card>

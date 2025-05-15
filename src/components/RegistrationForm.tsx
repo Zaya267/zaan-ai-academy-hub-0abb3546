@@ -7,12 +7,33 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, CalendarIcon } from 'lucide-react';
+import { Check, CalendarIcon, Clock } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+
+// Mock data for available dates and time slots
+const AVAILABLE_DATES = [
+  new Date(2025, 5, 16),
+  new Date(2025, 5, 17),
+  new Date(2025, 5, 20),
+  new Date(2025, 5, 21),
+  new Date(2025, 5, 22),
+  new Date(2025, 5, 25),
+  new Date(2025, 5, 30),
+];
+
+const TIME_SLOTS = {
+  "2025-06-16": ["9:00 AM", "11:00 AM", "2:00 PM", "4:00 PM"],
+  "2025-06-17": ["10:00 AM", "1:00 PM", "3:00 PM"],
+  "2025-06-20": ["9:00 AM", "11:00 AM", "2:00 PM"],
+  "2025-06-21": ["10:00 AM", "1:00 PM"],
+  "2025-06-22": ["9:00 AM", "3:00 PM", "5:00 PM"],
+  "2025-06-25": ["11:00 AM", "2:00 PM", "4:00 PM"],
+  "2025-06-30": ["9:00 AM", "1:00 PM", "4:00 PM"],
+};
 
 const RegistrationForm = () => {
   const { toast } = useToast();
@@ -24,10 +45,24 @@ const RegistrationForm = () => {
     studentType: 'part-time',
     classFormat: 'in-person',
     startDate: undefined as Date | undefined,
+    startTime: '',
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  
+  // Format date as string key for time slots
+  const formatDateKey = (date: Date) => {
+    return date ? format(date, "yyyy-MM-dd") : "";
+  };
+
+  // Get available time slots for selected date
+  const getAvailableTimeSlots = () => {
+    if (!formState.startDate) return [];
+    const dateKey = formatDateKey(formState.startDate);
+    return TIME_SLOTS[dateKey as keyof typeof TIME_SLOTS] || [];
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -36,10 +71,29 @@ const RegistrationForm = () => {
 
   const handleSelectChange = (field: string, value: string) => {
     setFormState(prev => ({ ...prev, [field]: value }));
+    
+    // Reset date and time when switching between in-person and online
+    if (field === 'classFormat') {
+      setFormState(prev => ({ 
+        ...prev, 
+        [field]: value,
+        startDate: undefined,
+        startTime: '', 
+      }));
+    }
   };
 
   const handleDateSelect = (date: Date | undefined) => {
-    setFormState(prev => ({ ...prev, startDate: date }));
+    setFormState(prev => ({ 
+      ...prev, 
+      startDate: date,
+      startTime: '', // Reset time when date changes
+    }));
+  };
+
+  const handleTimeSelect = (time: string) => {
+    setFormState(prev => ({ ...prev, startTime: time }));
+    setIsCalendarOpen(false);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -56,6 +110,21 @@ const RegistrationForm = () => {
         description: "We will contact you shortly to discuss your learning journey.",
       });
     }, 1500);
+  };
+
+  // Function to determine which days should be disabled
+  const isDayDisabled = (date: Date) => {
+    if (formState.classFormat === 'online') {
+      return false; // Online classes don't have date restrictions
+    }
+    
+    // For in-person, only allow specific available dates
+    return !AVAILABLE_DATES.some(
+      availableDate => 
+        availableDate.getDate() === date.getDate() && 
+        availableDate.getMonth() === date.getMonth() && 
+        availableDate.getFullYear() === date.getFullYear()
+    );
   };
 
   return (
@@ -181,8 +250,12 @@ const RegistrationForm = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="startDate">Preferred Start Date (Optional)</Label>
-                    <Popover>
+                    <Label htmlFor="startDate">
+                      {formState.classFormat === 'in-person' 
+                        ? 'Select Available Date & Time' 
+                        : 'Preferred Start Date (Optional)'}
+                    </Label>
+                    <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                       <PopoverTrigger asChild>
                         <Button
                           id="startDate"
@@ -193,18 +266,51 @@ const RegistrationForm = () => {
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {formState.startDate ? format(formState.startDate, "PPP") : "Select date"}
+                          {formState.startDate 
+                            ? `${format(formState.startDate, "PPP")}${formState.startTime ? ` at ${formState.startTime}` : ''}`
+                            : "Select date"}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={formState.startDate}
-                          onSelect={handleDateSelect}
-                          initialFocus
-                        />
+                        <div className="p-3">
+                          <Calendar
+                            mode="single"
+                            selected={formState.startDate}
+                            onSelect={handleDateSelect}
+                            disabled={formState.classFormat === 'in-person' ? isDayDisabled : undefined}
+                            initialFocus
+                            className="pointer-events-auto"
+                          />
+                          
+                          {formState.startDate && formState.classFormat === 'in-person' && (
+                            <div className="mt-4 border-t pt-4">
+                              <div className="mb-2 font-medium text-sm text-gray-700">
+                                Available Time Slots on {format(formState.startDate, "PP")}:
+                              </div>
+                              <div className="grid grid-cols-2 gap-2">
+                                {getAvailableTimeSlots().map(time => (
+                                  <Button 
+                                    key={time} 
+                                    variant={formState.startTime === time ? "default" : "outline"} 
+                                    size="sm"
+                                    onClick={() => handleTimeSelect(time)}
+                                    className="justify-start"
+                                  >
+                                    <Clock className="mr-2 h-3.5 w-3.5" />
+                                    {time}
+                                  </Button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </PopoverContent>
                     </Popover>
+                    {formState.classFormat === 'in-person' && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Only dates with available slots are selectable
+                      </p>
+                    )}
                   </div>
                   
                   <div className="space-y-2">
@@ -219,7 +325,11 @@ const RegistrationForm = () => {
                     />
                   </div>
                   
-                  <Button type="submit" className="w-full bg-atzaan-purple hover:bg-atzaan-purple/90" disabled={isSubmitting}>
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-atzaan-purple hover:bg-atzaan-purple/90" 
+                    disabled={isSubmitting || (formState.classFormat === 'in-person' && (!formState.startDate || !formState.startTime))}
+                  >
                     {isSubmitting ? "Submitting..." : "Register Now"}
                   </Button>
                   

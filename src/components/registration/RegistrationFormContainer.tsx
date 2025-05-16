@@ -15,12 +15,12 @@ const registrationFormSchema = z.object({
   program: z.string().min(1, { message: "Please select a program" }),
   studentType: z.string().default("part-time"),
   classFormat: z.string().default("in-person"),
-  startDate: z.date().optional().nullable(),
+  startDate: z.date().nullable(),
   startTime: z.string().optional(),
   message: z.string().optional(),
 });
 
-type RegistrationFormValues = z.infer<typeof registrationFormSchema>;
+export type RegistrationFormValues = z.infer<typeof registrationFormSchema>;
 
 const RegistrationFormContainer = () => {
   const { toast } = useToast();

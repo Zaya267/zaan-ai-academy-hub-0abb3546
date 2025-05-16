@@ -18,20 +18,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { RegistrationFormValues } from './RegistrationFormContainer';
 
 interface RegistrationFormFieldsProps {
-  form: UseFormReturn<{
-    name: string;
-    email: string;
-    phone?: string | undefined;
-    program: string;
-    studentType: string;
-    classFormat: string;
-    startDate: Date | null | undefined;
-    startTime?: string | undefined;
-    message?: string | undefined;
-  }>;
-  onSubmit: (values: any) => Promise<void>;
+  form: UseFormReturn<RegistrationFormValues>;
+  onSubmit: (values: RegistrationFormValues) => Promise<void>;
 }
 
 const RegistrationFormFields: React.FC<RegistrationFormFieldsProps> = ({ 

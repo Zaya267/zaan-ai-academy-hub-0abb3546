@@ -7,6 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Label } from "@/components/ui/label";
 import { CalendarIcon, Clock } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 // Mock data for available dates and time slots
 const AVAILABLE_DATES = [
@@ -45,6 +46,7 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
   onTimeSelect 
 }) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [currentMonthDates, setCurrentMonthDates] = useState<Date[]>([]);
   
   // Format date as string key for time slots
   const formatDateKey = (date: Date) => {
@@ -73,6 +75,53 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
     );
   };
 
+  // Get the number of available slots for a specific date
+  const getAvailableSlotsCount = (date: Date) => {
+    const dateKey = formatDateKey(date);
+    const slots = TIME_SLOTS[dateKey as keyof typeof TIME_SLOTS];
+    return slots ? slots.length : 0;
+  };
+
+  // Custom day rendering to show available slots indicator
+  const renderDay = (day: Date, selectedDay: Date | undefined, dayProps: React.ComponentPropsWithRef<"div">) => {
+    // Only add indicators for in-person format
+    if (classFormat === 'in-person') {
+      const isAvailable = !isDayDisabled(day);
+      const slotsCount = isAvailable ? getAvailableSlotsCount(day) : 0;
+      
+      return (
+        <div className="relative w-full h-full">
+          <div {...dayProps}>
+            {format(day, "d")}
+          </div>
+          {isAvailable && (
+            <div className="absolute bottom-0 left-0 right-0 flex justify-center">
+              <div className={cn(
+                "h-1 w-1 rounded-full",
+                slotsCount > 3 ? "bg-green-500" : 
+                slotsCount > 1 ? "bg-amber-500" : "bg-red-400"
+              )} />
+            </div>
+          )}
+        </div>
+      );
+    }
+    
+    return <div {...dayProps}>{format(day, "d")}</div>;
+  };
+
+  // Function to update current month's available dates for the mini calendar
+  const handleMonthChange = (month: Date) => {
+    // Filter available dates for the current month view
+    if (classFormat === 'in-person') {
+      const filteredDates = AVAILABLE_DATES.filter(date => 
+        date.getMonth() === month.getMonth() && 
+        date.getFullYear() === month.getFullYear()
+      );
+      setCurrentMonthDates(filteredDates);
+    }
+  };
+
   return (
     <div className="space-y-2">
       <Label htmlFor="startDate">
@@ -98,6 +147,26 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <div className="p-3">
+            {classFormat === 'in-person' && (
+              <div className="mb-3 px-2 pt-1 flex items-center justify-between">
+                <span className="text-sm font-medium">Available dates:</span>
+                <div className="flex items-center space-x-4 text-xs">
+                  <div className="flex items-center">
+                    <div className="h-2 w-2 rounded-full bg-green-500 mr-1"></div>
+                    <span>Many slots</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="h-2 w-2 rounded-full bg-amber-500 mr-1"></div>
+                    <span>Few slots</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="h-2 w-2 rounded-full bg-red-400 mr-1"></div>
+                    <span>Limited</span>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             <Calendar
               mode="single"
               selected={startDate}
@@ -105,12 +174,22 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
               disabled={classFormat === 'in-person' ? isDayDisabled : undefined}
               initialFocus
               className="pointer-events-auto"
+              onMonthChange={handleMonthChange}
+              components={{
+                Day: ({ day, selected, ...props }) => 
+                  renderDay(day, selected, props as React.ComponentPropsWithRef<"div">)
+              }}
             />
             
             {startDate && classFormat === 'in-person' && (
               <div className="mt-4 border-t pt-4">
-                <div className="mb-2 font-medium text-sm text-gray-700">
-                  Available Time Slots on {format(startDate, "PP")}:
+                <div className="mb-2 font-medium text-sm flex justify-between items-center">
+                  <span className="text-gray-700">
+                    Available Time Slots on {format(startDate, "PP")}:
+                  </span>
+                  <Badge variant="outline" className="text-xs">
+                    {getAvailableTimeSlots().length} slots
+                  </Badge>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   {getAvailableTimeSlots().map(time => (
@@ -136,7 +215,7 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
       </Popover>
       {classFormat === 'in-person' && (
         <p className="text-xs text-muted-foreground mt-1">
-          Only dates with available slots are selectable
+          Only dates with available slots are selectable. Color indicators show slot availability.
         </p>
       )}
     </div>

@@ -4,37 +4,55 @@ import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
 import RegistrationFormFields from '@/components/registration/RegistrationFormFields';
 import RegistrationSuccess from '@/components/registration/RegistrationSuccess';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+
+const registrationFormSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  phone: z.string().optional(),
+  program: z.string().min(1, { message: "Please select a program" }),
+  studentType: z.string().default("part-time"),
+  classFormat: z.string().default("in-person"),
+  startDate: z.date().optional().nullable(),
+  startTime: z.string().optional(),
+  message: z.string().optional(),
+});
+
+type RegistrationFormValues = z.infer<typeof registrationFormSchema>;
 
 const RegistrationFormContainer = () => {
   const { toast } = useToast();
-  const [formState, setFormState] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    program: '',
-    studentType: 'part-time',
-    classFormat: 'in-person',
-    startDate: undefined as Date | undefined,
-    startTime: '',
-    message: '',
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
+  const form = useForm<RegistrationFormValues>({
+    resolver: zodResolver(registrationFormSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      program: '',
+      studentType: 'part-time',
+      classFormat: 'in-person',
+      startDate: null,
+      startTime: '',
+      message: '',
+    },
+  });
+  
+  const isSubmitting = form.formState.isSubmitting;
+  
+  const onSubmit = async (data: RegistrationFormValues) => {
     // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitted(true);
-      
-      toast({
-        title: "Registration submitted!",
-        description: "We will contact you shortly to discuss your learning journey.",
-      });
-    }, 1500);
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    setSubmitted(true);
+    
+    toast({
+      title: "Registration submitted!",
+      description: "We will contact you shortly to discuss your learning journey.",
+    });
   };
 
   return (
@@ -50,10 +68,8 @@ const RegistrationFormContainer = () => {
         <div className="max-w-3xl mx-auto">
           {!submitted ? (
             <RegistrationFormFields 
-              formState={formState}
-              setFormState={setFormState}
-              isSubmitting={isSubmitting}
-              handleSubmit={handleSubmit}
+              form={form}
+              onSubmit={onSubmit}
             />
           ) : (
             <RegistrationSuccess onRegisterAnother={() => setSubmitted(false)} />

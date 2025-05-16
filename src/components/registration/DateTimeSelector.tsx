@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { CalendarIcon, Clock } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { DayContent } from "react-day-picker";
 
 // Mock data for available dates and time slots
 const AVAILABLE_DATES = [
@@ -83,16 +83,19 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
   };
 
   // Custom day rendering to show available slots indicator
-  const renderDay = (day: Date, selectedDay: Date | undefined, dayProps: React.ComponentPropsWithRef<"div">) => {
+  const renderDay = (props: React.ComponentProps<typeof DayContent>) => {
+    // Get the date from props
+    const date = props.date;
+    
     // Only add indicators for in-person format
     if (classFormat === 'in-person') {
-      const isAvailable = !isDayDisabled(day);
-      const slotsCount = isAvailable ? getAvailableSlotsCount(day) : 0;
+      const isAvailable = !isDayDisabled(date);
+      const slotsCount = isAvailable ? getAvailableSlotsCount(date) : 0;
       
       return (
         <div className="relative w-full h-full">
-          <div {...dayProps}>
-            {format(day, "d")}
+          <div {...props}>
+            {format(date, "d")}
           </div>
           {isAvailable && (
             <div className="absolute bottom-0 left-0 right-0 flex justify-center">
@@ -107,7 +110,7 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
       );
     }
     
-    return <div {...dayProps}>{format(day, "d")}</div>;
+    return <div {...props}>{format(date, "d")}</div>;
   };
 
   // Function to update current month's available dates for the mini calendar
@@ -176,8 +179,7 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
               className="pointer-events-auto"
               onMonthChange={handleMonthChange}
               components={{
-                Day: ({ day, selected, ...props }) => 
-                  renderDay(day, selected, props as React.ComponentPropsWithRef<"div">)
+                Day: renderDay
               }}
             />
             

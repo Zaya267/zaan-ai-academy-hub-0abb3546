@@ -44,11 +44,6 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
     }
   };
 
-  // Render custom day component with availability indicators
-  const renderDay = (props: React.ComponentProps<typeof CalendarDayIndicator['props']>) => {
-    return <CalendarDayIndicator props={props} classFormat={classFormat} />;
-  };
-
   return (
     <div className="space-y-2">
       <Label htmlFor="startDate">
@@ -88,7 +83,9 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
               className="pointer-events-auto"
               onMonthChange={handleMonthChange}
               components={{
-                Day: renderDay
+                Day: ({ ...dayProps }) => (
+                  <CalendarDayIndicator props={dayProps} classFormat={classFormat} />
+                )
               }}
             />
             

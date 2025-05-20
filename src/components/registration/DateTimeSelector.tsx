@@ -83,9 +83,7 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
               className="pointer-events-auto"
               onMonthChange={handleMonthChange}
               components={{
-                Day: ({ ...dayProps }) => (
-                  <CalendarDayIndicator props={dayProps} classFormat={classFormat} />
-                )
+                Day: props => <CalendarDayIndicator {...props} classFormat={classFormat} />
               }}
             />
             

@@ -1,21 +1,20 @@
 
 import React from 'react';
 import { format } from "date-fns";
-import { DayContent } from "react-day-picker";
+import { DayContentProps } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { isDayDisabled, getAvailableSlotsCount } from './dateTimeUtils';
 
-interface CalendarDayIndicatorProps {
-  props: React.ComponentProps<typeof DayContent>;
+interface CalendarDayIndicatorProps extends DayContentProps {
   classFormat: string;
 }
 
 const CalendarDayIndicator: React.FC<CalendarDayIndicatorProps> = ({ 
-  props, 
-  classFormat 
+  date,
+  activeModifiers,
+  classFormat,
+  ...props
 }) => {
-  const date = props.date;
-  
   // Only add indicators for in-person format
   if (classFormat === 'in-person') {
     const isAvailable = !isDayDisabled(date, classFormat);

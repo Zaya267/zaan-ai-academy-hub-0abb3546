@@ -9,122 +9,7 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      organization_members: {
-        Row: {
-          created_at: string
-          id: string
-          organization_id: string
-          profile_id: string
-          role: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          organization_id: string
-          profile_id: string
-          role: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          organization_id?: string
-          profile_id?: string
-          role?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "organization_members_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "organization_members_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      organizations: {
-        Row: {
-          address: string | null
-          contact_email: string
-          contact_phone: string | null
-          created_at: string
-          id: string
-          name: string
-          org_type: string
-          updated_at: string
-        }
-        Insert: {
-          address?: string | null
-          contact_email: string
-          contact_phone?: string | null
-          created_at?: string
-          id?: string
-          name: string
-          org_type: string
-          updated_at?: string
-        }
-        Update: {
-          address?: string | null
-          contact_email?: string
-          contact_phone?: string | null
-          created_at?: string
-          id?: string
-          name?: string
-          org_type?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      profiles: {
-        Row: {
-          created_at: string
-          email: string
-          first_name: string
-          id: string
-          last_name: string
-          organization_id: string | null
-          phone: string | null
-          updated_at: string
-          user_type: Database["public"]["Enums"]["user_type"]
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          first_name: string
-          id: string
-          last_name: string
-          organization_id?: string | null
-          phone?: string | null
-          updated_at?: string
-          user_type: Database["public"]["Enums"]["user_type"]
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          first_name?: string
-          id?: string
-          last_name?: string
-          organization_id?: string | null
-          phone?: string | null
-          updated_at?: string
-          user_type?: Database["public"]["Enums"]["user_type"]
-        }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
@@ -133,7 +18,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      user_type: "tutor" | "student" | "educator" | "admin"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -248,8 +133,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      user_type: ["tutor", "student", "educator", "admin"],
-    },
+    Enums: {},
   },
 } as const

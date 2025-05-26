@@ -28,7 +28,7 @@ interface CalendarDayIndicatorProps extends DayContentProps {
  */
 const CalendarDayIndicator: React.FC<CalendarDayIndicatorProps> = ({ 
   date,
-  activeModifiers,
+  activeModifiers = {},
   classFormat,
   ...props
 }) => {

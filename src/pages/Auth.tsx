@@ -10,7 +10,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { InfoIcon, AlertCircle } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 const Auth = () => {
@@ -131,14 +131,22 @@ const Auth = () => {
       
       // If registering as an organization, create organization record
       if (isOrganization && userData.user) {
-        const { error: orgError } = await supabase.from("organizations").insert({
-          name: orgName,
-          org_type: orgType,
-          contact_email: registerEmail,
-          contact_phone: phone,
-        });
-        
-        if (orgError) throw orgError;
+        try {
+          const { error: orgError } = await supabase.from("organizations").insert({
+            name: orgName,
+            org_type: orgType,
+            contact_email: registerEmail,
+            contact_phone: phone,
+          });
+          
+          if (orgError) {
+            console.error("Organization creation error:", orgError);
+            // Don't throw here as user is already created
+          }
+        } catch (orgErr) {
+          console.error("Failed to create organization:", orgErr);
+          // Continue without throwing as user creation was successful
+        }
       }
       
       toast({

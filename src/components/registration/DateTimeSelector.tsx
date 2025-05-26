@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { CalendarIcon } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { DayContentProps } from "react-day-picker";
 
 // Import the new components and utilities
 import CalendarDayIndicator from './dateTime/CalendarDayIndicator';
@@ -121,7 +122,12 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
               onMonthChange={handleMonthChange}
               components={{
                 // Custom day component with availability indicators
-                Day: props => <CalendarDayIndicator {...props} classFormat={classFormat} />
+                Day: (props: DayContentProps) => (
+                  <CalendarDayIndicator 
+                    {...props} 
+                    classFormat={classFormat} 
+                  />
+                )
               }}
             />
             
